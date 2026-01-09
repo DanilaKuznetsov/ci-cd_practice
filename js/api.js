@@ -1,72 +1,67 @@
-const API_BASE_URL = 'http://exam-api-courses.std-900.ist.mospolytech.ru/api';
-const API_KEY = 'b07e83be-ef6c-4cc0-a3ad-8914b41195ca';
+const API_BASE_URL = 'http://localhost:5000/api';
 
 class API {
-    async request(endpoint, method = 'GET', data = null) {
-        const url = new URL(`${API_BASE_URL}${endpoint}`);
-        url.searchParams.append('api_key', API_KEY);
-
-        const options = {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        };
-
-        if (data && (method === 'POST' || method === 'PUT')) {
-            options.body = JSON.stringify(data);
-        }
-
-        try {
-            const response = await fetch(url, options);
-            const result = await response.json();
-
-            if (!response.ok) {
-                throw new Error(result.error || 'Произошла ошибка при выполнении запроса');
-            }
-
-            return result;
-        } catch (error) {
-            console.error('API Error:', error);
-            throw error;
-        }
+  async request(endpoint, method = 'GET', data = null) {
+    const url = new URL(`${API_BASE_URL}${endpoint}`);
+    const options = {
+      method: method,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    };
+    
+    if (data && (method === 'POST' || method === 'PUT')) {
+      options.body = JSON.stringify(data);
     }
-
-    async getCourses() {
-        return await this.request('/courses');
+    
+    try {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Ошибка запроса');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('API Error:', error);
+      throw error;
     }
+  }
 
-    async getCourse(id) {
-        return await this.request(`/courses/${id}`);
-    }
+  async getCourses() {
+    return await this.request('/courses');
+  }
 
-    async getTutors() {
-        return await this.request('/tutors');
-    }
+  async getCourse(id) {
+    return await this.request(`/courses/${id}`);
+  }
 
-    async getTutor(id) {
-        return await this.request(`/tutors/${id}`);
-    }
+  async getTutors() {
+    return await this.request('/tutors');
+  }
 
-    async getOrders() {
-        return await this.request('/orders');
-    }
+  async getTutor(id) {
+    return await this.request(`/tutors/${id}`);
+  }
 
-    async getOrder(id) {
-        return await this.request(`/orders/${id}`);
-    }
+  async getOrders() {
+    return await this.request('/orders');
+  }
 
-    async createOrder(orderData) {
-        return await this.request('/orders', 'POST', orderData);
-    }
+  async getOrder(id) {
+    return await this.request(`/orders/${id}`);
+  }
 
-    async updateOrder(id, orderData) {
-        return await this.request(`/orders/${id}`, 'PUT', orderData);
-    }
+  async createOrder(orderData) {
+    return await this.request('/orders', 'POST', orderData);
+  }
 
-    async deleteOrder(id) {
-        return await this.request(`/orders/${id}`, 'DELETE');
-    }
+  async updateOrder(id, orderData) {
+    return await this.request(`/orders/${id}`, 'PUT', orderData);
+  }
+
+  async deleteOrder(id) {
+    return await this.request(`/orders/${id}`, 'DELETE');
+  }
 }
 
 const api = new API();
